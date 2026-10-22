@@ -6,5 +6,3 @@
 - 소스: https://github.com/Dong-DDack/about-me
 
 HTML, CSS, JavaScript로 구성됩니다.
-
-소개 카드를 세로로 나열하고 데스크톱에서는 소개와 타임라인을 3:1로 배치합니다. 태블릿·모바일에서는 카드 아래로 타임라인이 이어집니다.
