@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="관심사와 배움의 기록을 나누는 나의 소개 페이지">
+  <title>김동오 소개</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="content.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body><a class="skip-link" href="#about">소개로 건너뛰기</a>
+  <header class="topbar">
+    <a class="brand" href="#home">KimDongO PAGE<span>●</span></a>
+    <nav class="main-nav" aria-label="주요 메뉴">
+      <a href="#home">처음</a>
+      <a href="#about">나의 소개</a>
+      <a href="#boundaries">공개 범위</a>
+    </nav>
+    <button id="adminButton" class="quiet">admin</button>
+  </header>
+  <main>
+    <section id="home" class="hero">
+      <div><p class="eyebrow">01 / introduce myself</p><h1>문제 해결을 통해 나아가는 인재<span id="name"></span></h1><p id="intro" class="intro"></p></div>
+      <figure class="portrait"><img id="portraitImage" alt="소개 페이지 주인의 프로필 사진" hidden><div id="imagePlaceholder"><span class="portrait-symbol">✳</span><p>여기에 나의 사진을 넣어주세요</p><small>나를 가장 잘 표현하는 한 장</small></div></figure>
+    </section>
+    <section class="purpose"><p class="eyebrow">THIS PAGE IS FOR</p><p id="purpose"></p></section>
+    <section id="about" class="about"><div><p class="eyebrow">02 / ABOUT ME</p><h2>나의 소개</h2></div><div id="factTabs" class="fact-tabs" role="tablist" aria-label="나를 소개하는 세 가지"></div><div id="facts" class="facts"></div></section>
+    <section id="boundaries" class="boundaries"><div><p class="eyebrow">03 / MY BOUNDARIES</p><h2>공개 범위</h2><p class="muted">알리고 싶은 이야기와 지키고 싶은 일상을 구분해요.</p></div><div class="boundary-grid"><article><span class="tag">PUBLIC · 공개해요</span><ul id="publicInfo"></ul></article><article id="privateBoundary" class="private"><span class="tag">PRIVATE · 공개하지 않아요</span><ul id="privateInfoList"></ul></article></div></section>
+    <footer><span>조금씩 배우고, 나답게 기록하기.</span></footer>
+  </main>
+  <dialog id="loginDialog"><form id="loginForm"><div class="dialog-heading"><h2>관리자 모드</h2><button type="button" id="closeLogin" aria-label="닫기">×</button></div><p>초안 편집을 위한 간단한 잠금입니다. 실제 보안 인증은 아닙니다.</p><label>비밀번호<input id="password" type="password" autocomplete="current-password" required></label><p id="loginError" role="alert"></p><button class="pill" type="submit">편집 시작하기</button></form></dialog>
+  <dialog id="editorDialog"><form id="editorForm"><div class="dialog-heading"><h2>나의 페이지 편집</h2><button type="button" id="closeEditor" aria-label="닫기">×</button></div><label>이름 / 닉네임<input name="name" maxlength="40" required></label><label>짧은 소개<textarea name="intro" maxlength="300" required></textarea></label><label>누구에게, 어떤 목적으로 보여줄지 한 문장<textarea name="purpose" maxlength="300" required></textarea></label><div id="factFields"></div><label>공개할 정보 (한 줄에 하나, 3개 이상)<textarea name="publicInfo" rows="4" required></textarea></label><label>공개하지 않을 정보 (한 줄에 하나, 3개 이상)<textarea name="privateInfo" rows="4" placeholder="집 주소, 개인 연락처 등 정보의 종류만 적어주세요." required></textarea></label><p class="editor-note">실제 개인정보 대신 공개하지 않을 정보의 종류를 적어주세요. 이 목록도 로그인 없이 누구나 볼 수 있습니다.</p><label>프로필 사진 (JPG, PNG, WebP · 최대 2MB)<input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp"></label><button type="button" id="removePhoto" class="quiet">사진 비우기</button><p id="editorStatus" role="status"></p><div class="actions"><button type="submit" class="pill">브라우저에 저장</button><button type="button" id="logoutButton" class="quiet">로그아웃</button><button type="button" id="closeEditorBottom" class="quiet">닫기</button></div></form></dialog>
+</body>
+</html>
