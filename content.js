@@ -1,4 +1,4 @@
-// GitHub Pages에 공개하는 소개 데이터
+// ver1.1 공개 콘텐츠와 편집 가능한 타임라인
 window.PAGE_CONTENT = {
   "name": "김동오",
   "intro": "| 나이 : 31세\n| 생년월일 : 1996.04.13\n| 메일 : tonic0413@naver.com\n| 좋아하는 노래 : Jazzfact - Always awake",
@@ -33,5 +33,32 @@ window.PAGE_CONTENT = {
     "퇴사 사유",
     "희망 연봉",
     "전문적 영역과 무관한 깊은 개인 사생활"
+  ],
+  "timeline": [
+    {
+      "title": "데이터를 이해하는 기술",
+      "text": "머신러닝과 데이터 분석을 공부하고 Optuna로 모델을 비교하는 도구를 만들었습니다.",
+      "tags": [
+        "Machine Learning",
+        "Optuna",
+        "Data Analysis"
+      ]
+    },
+    {
+      "title": "도구를 연결하는 시도",
+      "text": "로컬 LLM을 연동하고 텔레그램 봇을 만들며 배운 기술을 작은 도구로 연결했습니다.",
+      "tags": [
+        "Local LLM",
+        "Telegram Bot"
+      ]
+    },
+    {
+      "title": "결과물로 남기는 배움",
+      "text": "몰입시계를 Microsoft Store에 배포하고, AI를 활용해 냉동식품 사이트 프로토타입을 만들었습니다.",
+      "tags": [
+        "Microsoft Store",
+        "AI Prototyping"
+      ]
+    }
   ]
 };

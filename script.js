@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const KEY = 'my-introduction-v2', PRIVATE_KEY = 'my-introduction-private-scope';
+  const KEY = 'my-introduction-v11', PRIVATE_KEY = 'my-introduction-private-scope-v11';
   const factKeys = ['title', 'situation', 'action', 'result'];
   const LOCK_HASH = 'd2e6d494d3cf714a8de7bc2f95da77a49b8f3973dd3b70c73c9d1100b8e5c3d4';
   const defaults = structuredClone(window.PAGE_CONTENT);
@@ -10,55 +10,41 @@
     try { const saved = JSON.parse(localStorage.getItem(PRIVATE_KEY)); if (Array.isArray(saved) && saved.length >= 3 && saved.every(item => typeof item === 'string')) return saved; } catch { /* 기본 목록을 표시합니다. */ }
     return [...defaultPrivateInfo];
   }
-  let privateInfo = loadPrivateScope(), activeFact = 0;
+  let privateInfo = loadPrivateScope();
   function valid(data) {
     return data && ['name', 'intro', 'purpose', 'image'].every(k => typeof data[k] === 'string') &&
       (data.image === '' || data.image === '김동오 증명사진.jpg' || /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(data.image)) &&
       Array.isArray(data.facts) && data.facts.length === 3 && data.facts.every(f => factKeys.every(k => typeof f[k] === 'string')) &&
-      Array.isArray(data.publicInfo) && data.publicInfo.length >= 3 && data.publicInfo.every(s => typeof s === 'string');
+      Array.isArray(data.publicInfo) && data.publicInfo.length >= 3 && data.publicInfo.every(s => typeof s === 'string') && (!data.timeline || (Array.isArray(data.timeline) && data.timeline.length === 3 && data.timeline.every(entry => typeof entry.title === 'string' && typeof entry.text === 'string' && Array.isArray(entry.tags) && entry.tags.every(tag => typeof tag === 'string'))));
   }
   function loadPublicContent() {
     try { const saved = JSON.parse(localStorage.getItem(KEY)); if (valid(saved)) return saved; } catch { /* 저장이 제한되면 파일의 공개 내용을 사용합니다. */ }
     return structuredClone(defaults);
   }
   let content = loadPublicContent(), admin = false, pendingImage = '';
-  function selectFact(index, focus = false) {
-    activeFact = index;
-    content.facts.forEach((_, i) => {
-      const tab = $('fact-tab-' + i), panel = $('fact-panel-' + i), selected = i === index;
-      tab.setAttribute('aria-selected', String(selected)); tab.tabIndex = selected ? 0 : -1;
-      panel.hidden = !selected;
-    });
-    if (focus) $('fact-tab-' + index).focus();
-  }
   function render() {
     document.body.classList.toggle('is-admin', admin);
     $('privateBoundary').hidden = false;
     ['name', 'intro', 'purpose'].forEach(k => $(k).textContent = content[k]);
     $('privateInfoList').replaceChildren(...privateInfo.map(value => { const li = document.createElement('li'); li.textContent = value; return li; }));
-    $('factTabs').replaceChildren(...content.facts.map((fact, i) => {
-      const tab = document.createElement('button'); tab.type = 'button'; tab.id = 'fact-tab-' + i;
-      tab.setAttribute('role', 'tab'); tab.setAttribute('aria-controls', 'fact-panel-' + i);
-      tab.textContent = fact.title; tab.onclick = () => selectFact(i);
-      tab.onkeydown = event => {
-        let next;
-        if (event.key === 'ArrowRight') next = (i + 1) % content.facts.length;
-        else if (event.key === 'ArrowLeft') next = (i + content.facts.length - 1) % content.facts.length;
-        else if (event.key === 'Home') next = 0;
-        else if (event.key === 'End') next = content.facts.length - 1;
-        if (next !== undefined) { event.preventDefault(); selectFact(next, true); }
-      };
-      return tab;
-    }));
     $('facts').replaceChildren(...content.facts.map((fact, i) => {
       const article = document.createElement('article'), number = document.createElement('span'), block = document.createElement('div'), title = document.createElement('h3');
-      article.id = 'fact-panel-' + i; article.setAttribute('role', 'tabpanel'); article.setAttribute('aria-labelledby', 'fact-tab-' + i); article.tabIndex = 0;
+      article.id = 'introduction-' + (i + 1); article.setAttribute('aria-labelledby', 'introduction-title-' + i); title.id = 'introduction-title-' + i;
       number.className = 'number'; number.textContent = `0${i + 1}`; title.textContent = fact.title;
       const dl = document.createElement('dl');
-      for (const [key,label] of [['situation','상황'],['action','행동'],['result','결과']]) { const dt=document.createElement('dt'),dd=document.createElement('dd'); dt.textContent=label; dd.textContent=fact[key]; dl.append(dt,dd); }
+      for (const [key,label] of [['situation','상황'],['action','행동'],['result','결과']]) { const dt=document.createElement('dt'),dd=document.createElement('dd'); dt.textContent=label; if (key === 'result') {
+        const parts = fact[key].split(/(https?:\/\/[^\s]+)/g);
+        parts.forEach(part => { if (/^https?:\/\//.test(part)) { const a = document.createElement('a'); a.href = part; a.textContent = part; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.setAttribute('aria-label', part + ' (새 탭)'); dd.append(a); } else dd.append(document.createTextNode(part)); });
+      } else dd.textContent=fact[key]; dl.append(dt,dd); }
       block.append(title, dl); article.append(number, block); return article;
     }));
-    selectFact(activeFact);
+    $('timeline').replaceChildren(...(content.timeline || defaults.timeline).map((entry, i) => {
+      const item = document.createElement('li'), marker = document.createElement('span'), heading = document.createElement('h4'), text = document.createElement('p'), tags = document.createElement('div');
+      marker.className = 'timeline-marker'; marker.textContent = String(i + 1); marker.setAttribute('aria-hidden', 'true');
+      heading.textContent = entry.title; text.textContent = entry.text; tags.className = 'timeline-tags';
+      entry.tags.forEach(value => { const tag = document.createElement('span'); tag.textContent = value; tags.append(tag); });
+      item.append(marker, heading, text, tags); return item;
+    }));
     $('publicInfo').replaceChildren(...content.publicInfo.map(value => { const li = document.createElement('li'); li.textContent = value; return li; }));
     $('portraitImage').hidden = !content.image; $('imagePlaceholder').hidden = !!content.image;
     if (content.image) $('portraitImage').src = content.image; else $('portraitImage').removeAttribute('src');
@@ -69,10 +55,19 @@
       label.textContent = `소개 ${i + 1} · ${caption}`; input.name = `fact${i}${key}`; input.required = true; input.maxLength = key === 'title' ? 80 : 500; label.append(input); $('factFields').append(label);
     }
   });
+  defaults.timeline.forEach((_, i) => {
+    const group = document.createElement('div'); group.className = 'timeline-edit-item';
+    for (const [key, caption] of [['title','제목'], ['text','내용'], ['tags','태그 (쉼표 구분)']]) {
+      const label = document.createElement('label'), input = document.createElement(key === 'text' ? 'textarea' : 'input');
+      label.textContent = '타임라인 ' + (i + 1) + ' · ' + caption; input.name = 'timeline' + i + key; input.maxLength = key === 'text' ? 500 : 120; input.required = key !== 'tags'; label.append(input); group.append(label);
+    }
+    $('timelineFields').append(group);
+  });
   function openEditor() {
     const form = $('editorForm');
     ['name', 'intro', 'purpose'].forEach(k => form.elements[k].value = content[k]);
     content.facts.forEach((fact, i) => factKeys.forEach(k => form.elements[`fact${i}${k}`].value = fact[k]));
+    (content.timeline || defaults.timeline).forEach((entry, i) => ['title','text','tags'].forEach(key => form.elements['timeline' + i + key].value = key === 'tags' ? entry.tags.join(', ') : entry[key]));
     form.elements.privateInfo.value = privateInfo.join('\n');
     form.elements.publicInfo.value = content.publicInfo.join('\n'); pendingImage = content.image; $('photoInput').value = ''; $('editorStatus').textContent = ''; $('editorDialog').showModal();
   }
@@ -86,7 +81,7 @@
       $('password').value='';
       if(hash !== LOCK_HASH) { $('loginError').textContent='비밀번호를 확인해주세요.'; return; }
       admin=true; content=loadPublicContent(); privateInfo=loadPrivateScope();
-      $('adminButton').textContent='admin · 편집 ↗'; $('loginDialog').close(); render(); openEditor();
+      $('adminButton').textContent='admin'; $('loginDialog').close(); render(); openEditor();
     } catch { $('loginError').textContent='localhost 또는 HTTPS 주소로 열어주세요. 보안 API를 사용할 수 없습니다.'; }
   };
   $('photoInput').onchange = async event => {
@@ -106,9 +101,11 @@
     if (!next.name || !next.intro || !next.purpose || next.facts.some(fact => factKeys.some(k => !fact[k]))) { $('editorStatus').textContent='공백만 있는 항목을 채워주세요.'; return null; }
     const privateScope = f.privateInfo.value.split('\n').map(s => s.trim()).filter(Boolean);
     if (privateScope.length < 3) { $('editorStatus').textContent='공개하지 않을 정보를 3개 이상 입력해주세요.'; return null; }
+    next.timeline = [0,1,2].map(i => ({ title: f['timeline' + i + 'title'].value.trim(), text: f['timeline' + i + 'text'].value.trim(), tags: f['timeline' + i + 'tags'].value.split(',').map(tag => tag.trim()).filter(Boolean) }));
+    if (next.timeline.some(entry => !entry.title || !entry.text)) { $('editorStatus').textContent = '타임라인 제목과 내용을 채워주세요.'; return null; }
     return { next, privateScope };
   }
   $('editorForm').onsubmit = event => { event.preventDefault(); const collected = collect(); if (!collected) return; const { next, privateScope } = collected; try { localStorage.setItem(PRIVATE_KEY, JSON.stringify(privateScope)); localStorage.setItem(KEY, JSON.stringify(next)); privateInfo = privateScope; content = next; render(); $('editorDialog').close(); } catch { $('editorStatus').textContent = '브라우저 저장에 실패했습니다. 저장 공간과 브라우저의 저장 허용 설정을 확인해주세요.'; } };
-  $('logoutButton').onclick = () => { admin = false; privateInfo = loadPrivateScope(); content = loadPublicContent(); render(); $('editorDialog').close(); $('adminButton').textContent = 'admin ↗'; };
+  $('logoutButton').onclick = () => { admin = false; privateInfo = loadPrivateScope(); content = loadPublicContent(); render(); $('editorDialog').close(); $('adminButton').textContent = 'admin'; };
   render();
 })();
