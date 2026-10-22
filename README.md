@@ -5,4 +5,4 @@
 - 페이지: https://dong-ddack.github.io/about-me/
 - 소스: https://github.com/Dong-DDack/about-me
 
-HTML, CSS, JavaScript로 구성됩니다. index.html을 열거나 정적 서버로 실행할 수 있습니다. 관리자 저장은 현재 브라우저에 적용되며 전체 공개 반영은 소스 파일 수정과 재배포가 필요합니다.
+HTML, CSS, JavaScript로 구성됩니다.
