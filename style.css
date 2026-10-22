@@ -9,7 +9,7 @@
 .boundary-grid{grid-template-columns:minmax(0,1fr)}
 body:not(.is-admin) .boundary-grid>article{border-left:4px solid var(--green)}
 body.is-admin .boundary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-body.is-admin .boundary-grid .private{border:1px dashed #737d6d;background:#eeede6}
+body.is-admin .boundary-grid .private{border:0;background:#eeede6}
 @media(max-width:700px){body.is-admin .boundary-grid{grid-template-columns:minmax(0,1fr)}}
 
 /* 편집 폼: 고정 너비 입력 영역과 테마에 맞춘 파일 선택 */
@@ -44,5 +44,5 @@ body.is-admin .boundary-grid .private{border:1px dashed #737d6d;background:#eeed
 /* 공개 범위 목록은 로그인 여부와 관계없이 같은 배치로 표시 */
 body .boundary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 body:not(.is-admin) .boundary-grid>article{border-left:0}
-body .boundary-grid .private{border:1px dashed #737d6d;background:#eeede6}
+body .boundary-grid .private{border:0;background:#eeede6}
 @media(max-width:700px){body .boundary-grid,body.is-admin .boundary-grid{grid-template-columns:minmax(0,1fr)}}
