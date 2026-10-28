@@ -1,4 +1,4 @@
-// ver1.1 공개 콘텐츠와 편집 가능한 타임라인
+// 공개 콘텐츠: 관리자 공개 저장 시 GitHub에 커밋됩니다.
 window.PAGE_CONTENT = {
   "name": "김동오",
   "intro": "| 나이 : 31세\n| 생년월일 : 1996.04.13\n| 메일 : tonic0413@naver.com\n| 좋아하는 노래 : Jazzfact - Always awake",
@@ -36,28 +36,31 @@ window.PAGE_CONTENT = {
   ],
   "timeline": [
     {
-      "title": "데이터를 이해하는 기술",
-      "text": "머신러닝과 데이터 분석을 공부하고 Optuna로 모델을 비교하는 도구를 만들었습니다.",
+      "title": "쉬는것도 경쟁력이다!",
+      "text": "팀원들과 잡담을 하면서 아이디어를 얻으며, 작업 흐름과 문제를 팀과 공유하여 질문과 피드백을 통해 팀원들간 상호작용하고 서로 보완이 되는 협업을 좋아합니다.",
       "tags": [
-        "Machine Learning",
-        "Optuna",
-        "Data Analysis"
+        "협업",
+        "문제해결"
       ]
     },
     {
-      "title": "도구를 연결하는 시도",
-      "text": "로컬 LLM을 연동하고 텔레그램 봇을 만들며 배운 기술을 작은 도구로 연결했습니다.",
+      "title": "공부 후 연결하는 시도!",
+      "text": "공부 후 끝나는 것이 아닌 실제로 적용하고 도구를 연동합니다.\n로컬LLM을 DB 연동하고 텔레그램 봇을 통해 크롤링한 내용을 알려주는 봇을 만들며, 몰입시계라는 Microsoft Store 배포 및 AI를 활용한 냉동식품 사이트 프로토타입을 만들었습니다.",
       "tags": [
-        "Local LLM",
-        "Telegram Bot"
-      ]
-    },
-    {
-      "title": "결과물로 남기는 배움",
-      "text": "몰입시계를 Microsoft Store에 배포하고, AI를 활용해 냉동식품 사이트 프로토타입을 만들었습니다.",
-      "tags": [
+        "연결",
+        "LocalLLM",
+        "Telegram Bot",
         "Microsoft Store",
-        "AI Prototyping"
+        "AI Prototype"
+      ]
+    },
+    {
+      "title": "지속적인 성장을 위한 도전!",
+      "text": "기술발전에 있어 정체되지 않고 지속적인 성장을 위해 강의와 교육을 찾아 듣고 시도하면서 저의 기술 발전을 위해 성장해 나아가고 있습니다.",
+      "tags": [
+        "성장",
+        "도전",
+        "시도"
       ]
     }
   ]

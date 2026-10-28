@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="관심사와 배움의 기록을 나누는 나의 소개 페이지">
   <title>김동오 소개</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="content.js" defer></script>
-  <script src="script.js" defer></script>
+  <link rel="stylesheet" href="style.css?v=public-save-1">
+  <script src="content.js?v=public-save-1" defer></script>
+  <script src="publish.js?v=public-save-1" defer></script>
+  <script src="script.js?v=public-save-1" defer></script>
 </head>
 <body><a class="skip-link" href="#about">소개로 건너뛰기</a>
   <header class="topbar">
@@ -19,7 +20,7 @@
     </nav>
     <button id="adminButton" class="quiet">admin</button>
   </header>
-  <main>
+  <main><p id="publishNotice" class="publish-notice" role="status" hidden></p>
     <section id="home" class="hero">
       <div><p class="eyebrow">01 / INTRODUCE MYSELF</p><h1>문제 해결을 통해 나아가는 인재 <span id="name"></span></h1><p id="intro" class="intro"></p></div>
       <figure class="portrait"><img id="portraitImage" alt="소개 페이지 주인의 프로필 사진" hidden><div id="imagePlaceholder"><span class="portrait-symbol">✳</span><p>여기에 나의 사진을 넣어주세요</p><small>나를 가장 잘 표현하는 한 장</small></div></figure>
@@ -30,6 +31,6 @@
     <footer><span>조금씩 배우고, 나답게 기록하기.</span></footer>
   </main>
   <dialog id="loginDialog"><form id="loginForm"><div class="dialog-heading"><h2>관리자 모드</h2><button type="button" id="closeLogin" aria-label="닫기">×</button></div><p>초안 편집을 위한 간단한 잠금입니다. 실제 보안 인증은 아닙니다.</p><label>비밀번호<input id="password" type="password" autocomplete="current-password" required></label><p id="loginError" role="alert"></p><button class="pill" type="submit">편집 시작하기</button></form></dialog>
-  <dialog id="editorDialog"><form id="editorForm"><div class="dialog-heading"><h2>나의 페이지 편집</h2><button type="button" id="closeEditor" aria-label="닫기">×</button></div><label>이름 / 닉네임<input name="name" maxlength="40" required></label><label>짧은 소개<textarea name="intro" maxlength="300" required></textarea></label><label>누구에게, 어떤 목적으로 보여줄지 한 문장<textarea name="purpose" maxlength="300" required></textarea></label><div id="factFields"></div><fieldset class="timeline-editor"><legend>타임라인 편집</legend><p class="editor-note">기술 스택·배운 과정·협업 방식 등 나의 이야기를 적어주세요. 태그는 쉼표로 구분합니다.</p><div id="timelineFields"></div></fieldset><label>공개할 정보 (한 줄에 하나, 3개 이상)<textarea name="publicInfo" rows="4" required></textarea></label><label>공개하지 않을 정보 (한 줄에 하나, 3개 이상)<textarea name="privateInfo" rows="4" placeholder="집 주소, 개인 연락처 등 정보의 종류만 적어주세요." required></textarea></label><p class="editor-note"></p><label>프로필 사진 (JPG, PNG, WebP · 최대 2MB)<input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp"></label><button type="button" id="removePhoto" class="quiet">사진 비우기</button><p id="editorStatus" role="status"></p><div class="actions"><button type="submit" class="pill">브라우저에 저장</button><button type="button" id="logoutButton" class="quiet">로그아웃</button><button type="button" id="closeEditorBottom" class="quiet">닫기</button></div></form></dialog>
+  <dialog id="editorDialog"><form id="editorForm"><div class="dialog-heading"><h2>나의 페이지 편집</h2><button type="button" id="closeEditor" aria-label="닫기">×</button></div><label>이름 / 닉네임<input name="name" maxlength="40" required></label><label>짧은 소개<textarea name="intro" maxlength="300" required></textarea></label><label>누구에게, 어떤 목적으로 보여줄지 한 문장<textarea name="purpose" maxlength="300" required></textarea></label><div id="factFields"></div><fieldset class="timeline-editor"><legend>타임라인 편집</legend><p class="editor-note">기술 스택·배운 과정·협업 방식 등 나의 이야기를 적어주세요. 태그는 쉼표로 구분합니다.</p><div id="timelineFields"></div></fieldset><label>공개할 정보 (한 줄에 하나, 3개 이상)<textarea name="publicInfo" rows="4" required></textarea></label><label>공개하지 않을 정보 (한 줄에 하나, 3개 이상)<textarea name="privateInfo" rows="4" placeholder="집 주소, 개인 연락처 등 정보의 종류만 적어주세요." required></textarea></label><p class="editor-note"></p><label>프로필 사진 (JPG, PNG, WebP · 최대 2MB)<input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp"></label><button type="button" id="removePhoto" class="quiet">사진 비우기</button><fieldset class="publish-settings"><legend>모든 방문자에게 공개 저장</legend><p>아래 공개 저장을 누르면 GitHub에 반영되고 자동 재배포됩니다. 일반 화면에는 배포된 내용만 표시합니다.</p><label>GitHub 토큰<input id="githubCredential" type="password" autocomplete="off" spellcheck="false" placeholder="about-me 저장소의 Contents 읽기·쓰기 권한"></label><p>토큰은 이번 요청에만 사용하고, 브라우저 저장소·공개 파일에 보관하지 않습니다. 채팅에 보내지 마세요.</p><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">GitHub에서 저장소 전용 토큰 만들기 ↗</a><p>Repository access: Only select repositories → about-me<br>Repository permissions: Contents → Read and write<br>짧은 만료 기간을 지정해주세요.</p></fieldset><p id="editorStatus" role="status"></p><div class="actions"><button type="button" id="publishButton" class="pill">공개 저장 · 재배포</button><button type="submit" class="quiet">이 브라우저에 초안 저장</button><button type="button" id="logoutButton" class="quiet">로그아웃</button><button type="button" id="closeEditorBottom" class="quiet">닫기</button></div></form></dialog>
 </body>
 </html>

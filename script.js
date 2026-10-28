@@ -10,7 +10,7 @@
     try { const saved = JSON.parse(localStorage.getItem(PRIVATE_KEY)); if (Array.isArray(saved) && saved.length >= 3 && saved.every(item => typeof item === 'string')) return saved; } catch { /* 기본 목록을 표시합니다. */ }
     return [...defaultPrivateInfo];
   }
-  let privateInfo = loadPrivateScope();
+  let privateInfo = [...defaultPrivateInfo];
   function valid(data) {
     return data && ['name', 'intro', 'purpose', 'image'].every(k => typeof data[k] === 'string') &&
       (data.image === '' || data.image === '김동오 증명사진.jpg' || /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(data.image)) &&
@@ -21,7 +21,7 @@
     try { const saved = JSON.parse(localStorage.getItem(KEY)); if (valid(saved)) return saved; } catch { /* 저장이 제한되면 파일의 공개 내용을 사용합니다. */ }
     return structuredClone(defaults);
   }
-  let content = loadPublicContent(), admin = false, pendingImage = '';
+  let content = structuredClone(defaults), admin = false, pendingImage = '';
   function render() {
     document.body.classList.toggle('is-admin', admin);
     $('privateBoundary').hidden = false;
@@ -64,6 +64,7 @@
     $('timelineFields').append(group);
   });
   function openEditor() {
+    $('githubCredential').value = '';
     const form = $('editorForm');
     ['name', 'intro', 'purpose'].forEach(k => form.elements[k].value = content[k]);
     content.facts.forEach((fact, i) => factKeys.forEach(k => form.elements[`fact${i}${k}`].value = fact[k]));
@@ -71,6 +72,7 @@
     form.elements.privateInfo.value = privateInfo.join('\n');
     form.elements.publicInfo.value = content.publicInfo.join('\n'); pendingImage = content.image; $('photoInput').value = ''; $('editorStatus').textContent = ''; $('editorDialog').showModal();
   }
+  $('editorDialog').addEventListener('close', () => { $('githubCredential').value = ''; });
   $('adminButton').onclick = () => { if (admin) openEditor(); else { $('loginError').textContent = ''; $('password').value = ''; $('loginDialog').showModal(); } };
   $('closeLogin').onclick = () => $('loginDialog').close(); $('closeEditor').onclick = () => $('editorDialog').close();
   $('closeEditorBottom').onclick = () => $('editorDialog').close();
@@ -87,10 +89,10 @@
   $('photoInput').onchange = async event => {
     const file = event.target.files[0]; if (!file) return;
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 2 * 1024 * 1024) { $('editorStatus').textContent = '2MB 이하 JPG, PNG, WebP 이미지를 선택해주세요.'; event.target.value = ''; return; }
-    $('editorForm').querySelector('[type=submit]').disabled = true;
+    $('publishButton').disabled = true; $('editorForm').querySelector('[type=submit]').disabled = true;
     try { pendingImage = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(file); }); $('editorStatus').textContent = '사진이 선택되었습니다. 저장하면 적용됩니다.'; }
     catch { $('editorStatus').textContent = '사진을 읽지 못했습니다. 다시 선택해주세요.'; }
-    finally { $('editorForm').querySelector('[type=submit]').disabled = false; }
+    finally { $('publishButton').disabled = false; $('editorForm').querySelector('[type=submit]').disabled = false; }
   };
   $('removePhoto').onclick = () => { pendingImage = ''; $('photoInput').value = ''; $('editorStatus').textContent = '저장하면 사진이 비워집니다.'; };
   function collect() {
@@ -106,6 +108,28 @@
     return { next, privateScope };
   }
   $('editorForm').onsubmit = event => { event.preventDefault(); const collected = collect(); if (!collected) return; const { next, privateScope } = collected; try { localStorage.setItem(PRIVATE_KEY, JSON.stringify(privateScope)); localStorage.setItem(KEY, JSON.stringify(next)); privateInfo = privateScope; content = next; render(); $('editorDialog').close(); } catch { $('editorStatus').textContent = '브라우저 저장에 실패했습니다. 저장 공간과 브라우저의 저장 허용 설정을 확인해주세요.'; } };
-  $('logoutButton').onclick = () => { admin = false; privateInfo = loadPrivateScope(); content = loadPublicContent(); render(); $('editorDialog').close(); $('adminButton').textContent = 'admin'; };
+  $('logoutButton').onclick = () => { admin = false; privateInfo = [...defaultPrivateInfo]; content = structuredClone(defaults); render(); $('editorDialog').close(); $('adminButton').textContent = 'admin'; };
+  $('publishButton').onclick = async () => {
+    if (!admin) return;
+    const collected = collect(); if (!collected) return;
+    let credential = $('githubCredential').value; $('githubCredential').value = '';
+    if (!credential.trim()) { $('editorStatus').textContent = 'GitHub 토큰을 입력해주세요. 기존 admin 비밀번호만으로는 GitHub에 쓸 수 없습니다.'; $('githubCredential').focus(); return; }
+    const controls = Array.from($('editorForm').querySelectorAll('input,textarea,button')); controls.forEach(control => control.disabled = true);
+    const preventClose = event => event.preventDefault(); $('editorDialog').addEventListener('cancel', preventClose);
+    $('editorStatus').textContent = 'GitHub에 공개 내용을 저장하는 중입니다…';
+    try {
+      const data = { ...collected.next, privateInfo: collected.privateScope };
+      const result = await window.GitHubPublisher.publish(data, credential, defaults);
+      Object.assign(defaults, structuredClone(data)); defaultPrivateInfo.splice(0, defaultPrivateInfo.length, ...data.privateInfo);
+      content = structuredClone(data); privateInfo = [...data.privateInfo];
+      try { localStorage.removeItem(KEY); localStorage.removeItem(PRIVATE_KEY); } catch { /* 공개 저장은 이미 완료되었습니다. */ }
+      render(); $('editorDialog').close();
+      $('publishNotice').hidden = false; $('publishNotice').replaceChildren();
+      const message = document.createElement('span'); message.textContent = 'GitHub에 공개 저장했습니다. 자동 배포 후 시크릿 창에도 반영됩니다. ';
+      const link = document.createElement('a'); link.href = result.url; link.textContent = '저장 기록 확인 ↗'; link.target = '_blank'; link.rel = 'noopener noreferrer';
+      $('publishNotice').append(message, link);
+    } catch (error) { $('editorStatus').textContent = error.message; }
+    finally { credential = ''; controls.forEach(control => control.disabled = false); $('editorDialog').removeEventListener('cancel', preventClose); }
+  };
   render();
 })();

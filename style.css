@@ -6,3 +6,5 @@
 
 /* 타임라인 번호: 진한 초록 → 중간 초록 → 밝은 바탕 */
 .timeline li:nth-child(2) .timeline-marker{background:#a7b99a;border-color:#829873;color:#24382e}
+
+.publish-settings{border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:22px}.publish-settings legend{font-size:14px;font-weight:700}.publish-settings p{font-size:12px;color:var(--muted)}.publish-settings a,.publish-notice a{text-decoration:underline;text-underline-offset:3px}.publish-notice{background:var(--soft);padding:14px 18px;border-radius:10px;font-size:13px}button:disabled{opacity:.6;cursor:wait}
